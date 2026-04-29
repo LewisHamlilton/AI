@@ -1,43 +1,29 @@
-def idx(x):
-    return nodes.index(x) if x in nodes else -1
-
-def show(lst):
-    return '[' + ', '.join(nodes[i] for i in lst) + ']'
+def idx(x): return nodes.index(x) if x in nodes else -1
+def show(lst): return '[' + ', '.join(nodes[i] for i in lst) + ']'
 
 def traverse(start, end, mode):
-    visited = [False]*vertices
-    open_list = [idx(start)]
-    closed = []
+    i, j = idx(start), idx(end)
+    if -1 in (i, j): return print("Invalid node!")
     
-    if open_list[0] == -1 or idx(end) == -1:
-        print("Invalid node!")
-        return
+    vis, op, cl = [False]*vertices, [i], []
+    print(f"\n{mode} Traversal:\n{'OPEN':<30} {'X':<10} CLOSED\n" + "-"*62)
     
-    print(f"\n{mode} Traversal:")
-    print(f"{'OPEN':<30} {'X':<10} CLOSED")
-    print("-"*62)
-    
-    while open_list:
-        current_open = show(open_list)
+    while op:
+        curr_op = show(op)
+        x = op.pop(0) if mode == "BFS" else op.pop()
+        cl.append(x)
+        vis[x] = True
+        print(f"{curr_op:<30} {nodes[x]:<10} {show(cl)}")
         
-        x = open_list.pop(0) if mode == "BFS" else open_list.pop()
-        closed.append(x)
-        visited[x] = True
-        
-        print(f"{current_open:<30} {nodes[x]:<10} {show(closed)}")
-        
-        if x == idx(end):
-            break
+        if x == j: break
         
         rng = range(vertices) if mode == "BFS" else range(vertices-1, -1, -1)
-        
         for i in rng:
-            if adj[x][i] and not visited[i]:
-                visited[i] = True
-                open_list.append(i)
+            if adj[x][i] and not vis[i]:
+                vis[i] = True
+                op.append(i)
     
-    print(f"\nFinal Path: {show(closed)}\n")
-
+    print(f"\nFinal Path: {show(cl)}\n")
 
 # MAIN
 vertices = int(input("Enter number of vertices: "))
@@ -55,19 +41,9 @@ for _ in range(e):
         print("Invalid edge ignored")
 
 while True:
-    print("\n--- MENU ---")
-    print("1. BFS\n2. DFS\n3. Exit")
-    ch = int(input("Enter choice: "))
-    
-    if ch == 3:
-        break
-    
-    s = input("Start node: ")
-    d = input("End node: ")
-    
-    if ch == 1:
-        traverse(s, d, "BFS")
-    elif ch == 2:
-        traverse(s, d, "DFS")
+    ch = input("\n--- MENU ---\n1. BFS\n2. DFS\n3. Exit\nEnter choice: ").strip()
+    if ch == '3': break
+    if ch in ('1', '2'):
+        traverse(input("Start node: "), input("End node: "), "BFS" if ch == '1' else "DFS")
     else:
         print("Invalid choice!")

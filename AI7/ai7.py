@@ -1,12 +1,8 @@
-# -------- Experiment 1 : Create Belief Network --------
-
 events = input("Enter events separated by space (Example: B E A J M): ").split()
 
 print("\nEvents in the Network:")
 for e in events:
     print(e)
-
-# -------- Store Conditional Probability Tables --------
 
 print("\nEnter Prior Probabilities")
 P_B = float(input("P(Burglary): "))
@@ -34,51 +30,36 @@ P_M = {
 print("\nConditional Probability Table Stored Successfully")
 
 print("\nCPT Values")
-print("P(B) =", P_B)
-print("P(E) =", P_E)
-for k in P_A:
-    print(f"P(A|{'B' if k[0] else '~B'},{'E' if k[1] else '~E'}) =", P_A[k])
-print("P(J|A) =", P_J[True])
-print("P(J|~A) =", P_J[False])
-print("P(M|A) =", P_M[True])
-print("P(M|~A) =", P_M[False])
-
-
-# -------- Joint Probability Function --------
+print(f"P(B) = {P_B}")
+print(f"P(E) = {P_E}")
+print(f"P(A|B,E) = {P_A[(True, True)]}")
+print(f"P(A|B,~E) = {P_A[(True, False)]}")
+print(f"P(A|~B,E) = {P_A[(False, True)]}")
+print(f"P(A|~B,~E) = {P_A[(False, False)]}")
+print(f"P(J|A) = {P_J[True]}")
+print(f"P(J|~A) = {P_J[False]}")
+print(f"P(M|A) = {P_M[True]}")
+print(f"P(M|~A) = {P_M[False]}")
 
 def joint_prob(B, E, A, J, M):
-    pB = P_B if B else 1 - P_B
-    pE = P_E if E else 1 - P_E
-
-    pA = P_A[(B, E)]
-    pA = pA if A else 1 - pA
-
-    pJ = P_J[A] if J else 1 - P_J[A]
-    pM = P_M[A] if M else 1 - P_M[A]
-
-    return pB * pE * pA * pJ * pM
-
-
-# -------- Sample Query --------
+    prob_B = P_B if B else (1 - P_B)
+    prob_E = P_E if E else (1 - P_E)
+    prob_A = P_A[(B, E)] if A else (1 - P_A[(B, E)])
+    prob_J = P_J[A] if J else (1 - P_J[A])
+    prob_M = P_M[A] if M else (1 - P_M[A])
+    
+    return prob_B * prob_E * prob_A * prob_J * prob_M
 
 print("\nSample Query")
 print("Alarm sounded but no burglary, no earthquake, John and Mary called")
-
-result = joint_prob(False, False, True, True, True)
-print("Probability =", result)
-
-
-# -------- User Queries --------
+print("Probability =", joint_prob(False, False, True, True, True))
 
 print("\nEnter 5 Queries")
-
-for i in range(5):
-    print("\nQuery", i+1)
-
+for i in range(1, 6):
+    print(f"\nQuery {i}")
     B = bool(int(input("Burglary occurred? (1/0): ")))
     E = bool(int(input("Earthquake occurred? (1/0): ")))
     A = bool(int(input("Alarm sounded? (1/0): ")))
     J = bool(int(input("John called? (1/0): ")))
     M = bool(int(input("Mary called? (1/0): ")))
-
     print("Joint Probability =", joint_prob(B, E, A, J, M))
